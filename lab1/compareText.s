@@ -14,8 +14,7 @@ msg_len = . - msg
 msg2: .ascii "Written text: "
 msg2_len = . - msg2
 
-msg3: .ascii "Kajak" #dodatkowa do porównania
-msg3_len = . - msg3
+msg3: .ascii "kowal" #Dodatkowa zmienna do porównania sobie
 
 newline: .ascii "\n"
 newline_len = . - newline
@@ -78,13 +77,15 @@ mov $buf, %ecx
 # licznik do pętli aby przechodzić do kolejnych znaków
 mov $0, %edx      
 
+# (Pytanie) należy określić ograniczenie jakie nakłada na program “compareText” wykorzystanie rejestru akumulatora.
+# Etykieta pętli potrzebna do porównania wyrazów (%al jest 8 bitowy jest w stanie przechowywać 1 znak ASCII dlatego porównywać będziem znak po znaku)
 loop:
-mov (%ebx,%edx,1), %al    # wczytanie kolejnych znaków do al
-cmp (%ecx,%edx,1), %al    # porównanie z znakiem w buforze
+mov (%ebx,%edx), %al    # załadowanie wartości do rejestru al
+cmp (%ecx,%edx), %al    # porównanie czy wartości są równe
 jne not_equal             # jeśli nie są równe, skaczemy do etykiety not_equal
 
-inc %edx            # zwiększenie liczniku aby przejsc na kolejny znak
-cmp $5, %edx        # porówanie jeśli przejedziemy wszystkie znaki 
+inc %edx            # zwiększenie liczniku aby przejsc na kolejny znak 
+cmp $5, %edx        # porówanie jeśli przejedziemy wszystkie znaki (Max 5 bo tyle możemy zapisać do buf)
 jne loop            # to wyjdzie z petli jeśli jeszcze nie to skaczemy do etykiety loop 
 
 #wynik gdy słowa są równe
